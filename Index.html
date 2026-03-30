@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GetVisible — Stop Applying. Start Being Found.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0d0d0d;--off:#f5f3ef;--accent:#c8511a;--muted:#6b6760;--border:#e0ddd8;--card:#ffffff}
+body{background:var(--off);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6}
+.page{max-width:680px;margin:0 auto;padding:0}
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 32px;border-bottom:0.5px solid var(--border)}
+.logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--ink)}
+.logo span{color:var(--accent)}
+.nav-cta{font-size:13px;font-weight:500;color:var(--muted);border:0.5px solid var(--border);padding:7px 16px;border-radius:6px;background:var(--card);cursor:pointer;transition:all .15s}
+.nav-cta:hover{border-color:var(--ink);color:var(--ink)}
+.hero{padding:64px 32px 48px;border-bottom:0.5px solid var(--border)}
+.hero-eyebrow{font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+.hero-h1{font-family:'Playfair Display',serif;font-size:52px;font-weight:900;line-height:1.08;letter-spacing:-1.5px;color:var(--ink);margin-bottom:24px}
+.hero-h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:17px;font-weight:300;color:var(--muted);max-width:480px;line-height:1.7;margin-bottom:36px}
+.hero-sub strong{color:var(--ink);font-weight:500}
+.hero-btns{display:flex;flex-direction:column;gap:12px;max-width:440px}
+.btn-primary{height:52px;padding:0 28px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .15s;width:100%}
+.btn-primary:hover{background:#2a2a2a;transform:translateY(-1px)}
+.btn-secondary{height:52px;padding:0 28px;background:transparent;color:var(--ink);border:0.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .15s;width:100%}
+.btn-secondary:hover{border-color:var(--ink)}
+.pricing-note{font-size:12px;color:var(--muted);line-height:1.5}
+.pricing-note strong{color:var(--accent);font-weight:500}
+.proof-strip{padding:20px 32px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:24px}
+.proof-stat{text-align:center}
+.proof-stat .num{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--ink)}
+.proof-stat .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.proof-divider{width:0.5px;height:40px;background:var(--border)}
+.pain{padding:56px 32px;border-bottom:0.5px solid var(--border);background:var(--ink);color:var(--off)}
+.pain-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-weight:500}
+.pain-h2{font-family:'Playfair Display',serif;font-size:48px;font-weight:900;line-height:1.1;margin-bottom:10px;letter-spacing:-1px;color:#fff}
+.pain-sub{font-size:15px;color:rgba(245,243,239,0.45);margin-bottom:40px}
+.pain-list{display:flex;flex-direction:column}
+.pain-item{display:flex;align-items:flex-start;gap:20px;padding:22px 0;border-bottom:0.5px solid rgba(255,255,255,0.1);cursor:pointer;transition:all .15s;border-radius:4px}
+.pain-item:last-child{border-bottom:none}
+.pain-item:hover .pain-check{border-color:rgba(255,255,255,0.6)}
+.pain-check{width:26px;height:26px;border:1.5px solid rgba(255,255,255,0.2);border-radius:6px;flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.pain-check svg{opacity:0;transform:scale(0.4);transition:all .2s}
+.pain-item.checked .pain-check{background:var(--accent);border-color:var(--accent)}
+.pain-item.checked .pain-check svg{opacity:1;transform:scale(1)}
+.pain-text-wrap{flex:1}
+.pain-headline{font-size:19px;font-weight:500;color:var(--off);line-height:1.25;margin-bottom:6px;transition:color .2s}
+.pain-item.checked .pain-headline{color:rgba(245,243,239,0.45);text-decoration:line-through;text-decoration-color:rgba(245,243,239,0.2)}
+.pain-detail{font-size:13px;color:var(--accent);line-height:1.6;opacity:0.9}
+.pain-tally{margin-top:28px;padding:20px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;text-align:center;min-height:62px;display:flex;align-items:center;justify-content:center}
+.pain-tally p{font-size:15px;color:rgba(245,243,239,0.4)}
+.tally-msg{font-size:17px;font-weight:500;color:#fff;display:none}
+.flip{padding:56px 32px;border-bottom:0.5px solid var(--border)}
+.flip-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;font-weight:500}
+.flip-h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;letter-spacing:-0.5px;line-height:1.15;margin-bottom:12px}
+.flip-sub{font-size:16px;color:var(--muted);margin-bottom:36px;max-width:460px}
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:20px;padding:20px 0;border-bottom:0.5px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--border);line-height:1;min-width:36px}
+.step-body h4{font-size:15px;font-weight:500;margin-bottom:4px}
+.step-body p{font-size:14px;color:var(--muted);line-height:1.6}
+.how{padding:56px 32px;border-bottom:0.5px solid var(--border);background:var(--card)}
+.how-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;font-weight:500}
+.how-h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;letter-spacing:-0.5px;line-height:1.15;margin-bottom:32px}
+.post-cards{display:flex;flex-direction:column;gap:12px}
+.post-card{border:0.5px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start}
+.post-tag{font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px}
+.tag-text{background:#f0ece6;color:#6b6760}
+.tag-photo{background:#eef0f8;color:#4a5298}
+.tag-video{background:#fef0e8;color:#c8511a}
+.post-card p{font-size:14px;color:var(--muted);line-height:1.55}
+.post-card p strong{color:var(--ink);font-weight:500}
+.pricing{padding:56px 32px;border-bottom:0.5px solid var(--border)}
+.pricing-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;font-weight:500}
+.pricing-h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px}
+.pricing-sub{font-size:16px;color:var(--muted);margin-bottom:32px}
+.price-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.price-card{border:0.5px solid var(--border);border-radius:12px;padding:24px;background:var(--card)}
+.price-card.featured{border:1.5px solid var(--ink);position:relative}
+.founder-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:11px;font-weight:500;padding:4px 14px;border-radius:20px;white-space:nowrap;letter-spacing:0.5px}
+.price-name{font-size:13px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.price-amount{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;line-height:1;margin-bottom:4px}
+.price-amount sup{font-size:20px;vertical-align:top;margin-top:8px;font-family:'DM Sans',sans-serif}
+.price-cadence{font-size:13px;color:var(--muted);margin-bottom:20px}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.price-features li{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
+.price-features li::before{content:"→";color:var(--accent);font-size:12px;margin-top:2px}
+.btn-outline{width:100%;height:40px;background:transparent;border:0.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s}
+.btn-outline:hover{border-color:var(--ink);background:var(--off)}
+.btn-filled{width:100%;height:40px;background:var(--ink);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#fff;cursor:pointer;transition:all .15s}
+.btn-filled:hover{background:#2a2a2a}
+.cta-footer{padding:64px 32px;text-align:center;background:var(--ink)}
+.cta-footer h2{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;color:var(--off);line-height:1.1;letter-spacing:-1px;margin-bottom:16px}
+.cta-footer h2 em{color:var(--accent);font-style:italic}
+.cta-footer>p{font-size:16px;color:rgba(245,243,239,0.6);margin-bottom:32px}
+.cta-footer-btns{display:flex;flex-direction:column;gap:10px;max-width:380px;margin:0 auto}
+.btn-footer-primary{height:52px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:background .15s}
+.btn-footer-primary:hover{background:#b04615}
+.btn-footer-secondary{height:52px;background:transparent;color:rgba(245,243,239,0.7);border:0.5px solid rgba(255,255,255,0.2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-footer-secondary:hover{border-color:rgba(255,255,255,0.5);color:#fff}
+.fine-print{font-size:12px;color:rgba(245,243,239,0.3);margin-top:16px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:16px;padding:36px;max-width:400px;width:90%;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);line-height:1}
+.modal-close:hover{color:var(--ink)}
+.modal h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;letter-spacing:-0.5px}
+.modal>p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.modal>p strong{color:var(--accent);font-weight:500}
+#modal-desc{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+#modal-desc strong{color:var(--accent);font-weight:500}
+.modal input[type=email]{width:100%;height:48px;padding:0 16px;border:0.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;margin-bottom:12px;transition:border-color .15s;display:block}
+.modal input[type=email]:focus{border-color:var(--ink)}
+.modal input[type=email]::placeholder{color:#b0ada7}
+.modal-btn{width:100%;height:48px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .15s;display:block}
+.modal-btn:hover{background:#2a2a2a}
+.modal-btn.accent{background:var(--accent)}
+.modal-btn.accent:hover{background:#b04615}
+.modal-success{display:none;text-align:center;padding:12px 0}
+.modal-fine{font-size:11px;color:var(--muted);text-align:center;margin-top:10px}
+@media(max-width:520px){
+  .hero-h1{font-size:38px}
+  .pain-h2{font-size:36px}
+  .price-cards{grid-template-columns:1fr}
+  .proof-strip{flex-wrap:wrap;gap:16px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <nav>
+    <div class="logo">GetVisible<span>.</span></div>
+    <button class="nav-cta" onclick="openModal('founder')">Get early access</button>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow">For job seekers who are done waiting</div>
+    <h1 class="hero-h1">You've sent<br>100 résumés.<br><em>Heard nothing.</em></h1>
+    <p class="hero-sub">Stop applying into the void. <strong>GetVisible</strong> sends you done-for-you LinkedIn content every week — mapped to your career goal — so recruiters start reaching out to <em>you</em>.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="openModal('founder')">Lock in founder rate — $15.99/mo →</button>
+      <button class="btn-secondary" onclick="openModal('waitlist')">Join the waitlist (regular $29/mo)</button>
+      <p class="pricing-note"><strong>Founder pricing locked in forever.</strong> Limited spots — regular price is $29/mo.</p>
+    </div>
+  </section>
+
+  <div class="proof-strip">
+    <div class="proof-stat"><div class="num">2%</div><div class="label">avg. response rate on job boards</div></div>
+    <div class="proof-divider"></div>
+    <div class="proof-stat"><div class="num">337+</div><div class="label">apps before one offer</div></div>
+    <div class="proof-divider"></div>
+    <div class="proof-stat"><div class="num">95%</div><div class="label">of recruiters source on LinkedIn</div></div>
+  </div>
+
+  <section class="pain">
+    <div class="pain-label">Sound familiar?</div>
+    <h2 class="pain-h2">Check every box<br>that applies to you.</h2>
+    <p class="pain-sub">Be honest. Click the ones that hit.</p>
+    <div class="pain-list">
+      <div class="pain-item" onclick="toggleCheck(this)">
+        <div class="pain-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="pain-text-wrap">
+          <div class="pain-headline">I've applied to dozens of jobs and heard almost nothing back.</div>
+          <div class="pain-detail">The average job seeker submits 337+ applications before a single offer. It's not you — the system is broken.</div>
+        </div>
+      </div>
+      <div class="pain-item" onclick="toggleCheck(this)">
+        <div class="pain-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="pain-text-wrap">
+          <div class="pain-headline">I know I should be posting on LinkedIn. I just never do.</div>
+          <div class="pain-detail">Life gets in the way. You sit down to write something, the blank page wins. You close the tab.</div>
+        </div>
+      </div>
+      <div class="pain-item" onclick="toggleCheck(this)">
+        <div class="pain-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="pain-text-wrap">
+          <div class="pain-headline">I don't know what to post or whether anyone would care.</div>
+          <div class="pain-detail">Decision fatigue is real. Too many options, too much second-guessing. The post never gets written.</div>
+        </div>
+      </div>
+      <div class="pain-item" onclick="toggleCheck(this)">
+        <div class="pain-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="pain-text-wrap">
+          <div class="pain-headline">I feel invisible to recruiters even though I'm qualified.</div>
+          <div class="pain-detail">They're not finding you because they can't see you. Your résumé is static. Your profile is quiet.</div>
+        </div>
+      </div>
+      <div class="pain-item" onclick="toggleCheck(this)">
+        <div class="pain-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="pain-text-wrap">
+          <div class="pain-headline">I'm busy. I don't have hours to spend on personal branding.</div>
+          <div class="pain-detail">You have a job, a life, obligations. Personal branding feels like a part-time job you didn't sign up for.</div>
+        </div>
+      </div>
+    </div>
+    <div class="pain-tally" id="tally"><p>← Click the ones that apply to you</p></div>
+  </section>
+
+  <section class="flip">
+    <div class="flip-label">The solution</div>
+    <h2 class="flip-h2">Flip the script.<br>Let recruiters find you.</h2>
+    <p class="flip-sub">GetVisible builds your personal brand on autopilot — one post at a time, each one mapped to your exact career goal.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">01</div><div class="step-body"><h4>Tell us where you're going</h4><p>Share your current role, your target role, and your résumé. Takes 5 minutes. You never do it again.</p></div></div>
+      <div class="step"><div class="step-num">02</div><div class="step-body"><h4>We build your roadmap</h4><p>GetVisible identifies the skill gaps between where you are and where you want to be — and turns them into a content plan.</p></div></div>
+      <div class="step"><div class="step-num">03</div><div class="step-body"><h4>Content lands in your inbox</h4><p>Every week you get 3 ready-to-post options: a text post, a photo idea with caption, a video script. Copy. Post. Done.</p></div></div>
+      <div class="step"><div class="step-num">04</div><div class="step-body"><h4>Recruiters start reaching out</h4><p>You become the candidate who looks like an expert in their field. Inbound beats outbound — every time.</p></div></div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="how-label">What you get</div>
+    <h2 class="how-h2">Three posts. Every week.<br>All you do is hit send.</h2>
+    <div class="post-cards">
+      <div class="post-card"><span class="post-tag tag-text">Text post</span><p>A <strong>copy-paste LinkedIn post</strong> written in your voice, tied to a skill that positions you for your target role. Read it, tweak if you want, publish.</p></div>
+      <div class="post-card"><span class="post-tag tag-photo">Photo idea</span><p><strong>Exactly what to photograph or screenshot</strong> — your desk setup, a cert you just earned, a before/after of a project, a tool you use daily — plus a full caption ready to post. No guessing. Just shoot and share.</p></div>
+      <div class="post-card"><span class="post-tag tag-video">Video script</span><p>A <strong>30–60 second word-for-word script</strong> you can film on your phone. Short-form video is where the reach is. We write every line. You just hit record.</p></div>
+    </div>
+  </section>
+
+  <section class="pricing">
+    <div class="pricing-label">Pricing</div>
+    <h2 class="pricing-h2">Simple pricing.<br>One decision.</h2>
+    <p class="pricing-sub">Join the founding cohort and lock in your rate forever.</p>
+    <div class="price-cards">
+      <div class="price-card featured">
+        <div class="founder-badge">Founder rate — limited spots</div>
+        <div class="price-name">Early member</div>
+        <div class="price-amount"><sup>$</sup>15<span style="font-size:22px;font-family:'DM Sans',sans-serif;font-weight:300">.99</span></div>
+        <div class="price-cadence">per month — locked in forever</div>
+        <ul class="price-features">
+          <li>Personalized career roadmap</li>
+          <li>3 posts per week, all formats</li>
+          <li>Reject & regenerate anytime</li>
+          <li>Rate never increases</li>
+          <li>First access to new features</li>
+          <li>Direct line to the founder</li>
+        </ul>
+        <button class="btn-filled" onclick="openModal('founder')">Lock in $15.99/mo →</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Regular</div>
+        <div class="price-amount"><sup>$</sup>29</div>
+        <div class="price-cadence">per month</div>
+        <ul class="price-features">
+          <li>Personalized career roadmap</li>
+          <li>3 posts per week, all formats</li>
+          <li>Reject & regenerate anytime</li>
+        </ul>
+        <button class="btn-outline" onclick="openModal('waitlist')">Join waitlist</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-footer">
+    <h2>Stop applying.<br>Start being <em>found.</em></h2>
+    <p>Join the waitlist. Lock in your founder rate. Be one of the first.</p>
+    <div class="cta-footer-btns">
+      <button class="btn-footer-primary" onclick="openModal('founder')">Lock in $15.99/mo — founder rate →</button>
+      <button class="btn-footer-secondary" onclick="openModal('waitlist')">Join waitlist at regular price</button>
+    </div>
+    <p class="fine-print">No spam. No pressure. Just early access and a better rate.</p>
+  </section>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modal-title">Lock in your founder rate</h3>
+    <p id="modal-desc">Enter your email first — then we'll take you to checkout to lock in <strong>$15.99/mo forever</strong>.</p>
+    <div id="modal-form">
+      <form onsubmit="handleSubmit(event)">
+        <input type="email" id="modal-email" placeholder="Your email address" required />
+        <button type="submit" class="modal-btn accent" id="modal-btn">Continue to checkout →</button>
+      </form>
+      <p class="modal-fine">No spam. Unsubscribe anytime.</p>
+    </div>
+    <div class="modal-success" id="modal-success">
+      <p style="font-size:15px;color:var(--ink);margin:0" id="modal-success-msg">✓ You're on the list!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const STRIPE_URL = 'https://buy.stripe.com/aFa28rdpI3btbSK3UP5os00';
+const ML_URL = 'https://assets.mailerlite.com/jsonp/2232832/forms/183378920820704543/subscribe';
+let currentMode = 'founder';
+
+const tallyMessages = ['','That\'s a start. Keep going.','You\'re not alone in this.','Three for three. This is exactly who GetVisible is built for.','Four checked. You need this.','That\'s all five. You found the right place. Let\'s fix this.'];
+
+function toggleCheck(item){item.classList.toggle('checked');updateTally();}
+
+function updateTally(){
+  const n = document.querySelectorAll('.pain-item.checked').length;
+  const t = document.getElementById('tally');
+  if(n===0){t.innerHTML='<p>← Click the ones that apply to you</p>';return;}
+  t.innerHTML='<div class="tally-msg" style="display:block">'+n+'/5 — '+tallyMessages[n]+' <a href="#" onclick="openModal(\'founder\');return false;" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px">Get early access →</a></div>';
+}
+
+function openModal(mode){
+  currentMode = mode;
+  document.getElementById('modal-form').style.display='block';
+  document.getElementById('modal-success').style.display='none';
+  document.getElementById('modal-email').value='';
+  if(mode==='founder'){
+    document.getElementById('modal-title').textContent='Lock in your founder rate';
+    document.getElementById('modal-desc').innerHTML='Enter your email — then we\'ll take you to checkout to lock in <strong>$15.99/mo forever</strong>.';
+    document.getElementById('modal-btn').textContent='Continue to checkout →';
+    document.getElementById('modal-btn').className='modal-btn accent';
+  } else {
+    document.getElementById('modal-title').textContent='Join the waitlist';
+    document.getElementById('modal-desc').innerHTML='Enter your email to join the waitlist. You\'ll hear from us when we launch at <strong>$29/mo</strong>.';
+    document.getElementById('modal-btn').textContent='Join the waitlist →';
+    document.getElementById('modal-btn').className='modal-btn';
+  }
+  document.getElementById('modal').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-email').focus(),100);
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function closeModalOutside(e){if(e.target===document.getElementById('modal'))closeModal();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+function handleSubmit(e){
+  e.preventDefault();
+  const email = document.getElementById('modal-email').value.trim();
+  if(!email||!email.includes('@'))return;
+
+  const fd = new FormData();
+  fd.append('fields[email]', email);
+  fd.append('ml-submit','1');
+  fd.append('anticsrf','true');
+  fetch(ML_URL,{method:'POST',body:fd,mode:'no-cors'});
+
+  document.getElementById('modal-form').style.display='none';
+  const s = document.getElementById('modal-success');
+  s.style.display='block';
+
+  if(currentMode==='founder'){
+    document.getElementById('modal-success-msg').innerHTML='✓ Got it! Taking you to checkout...<br><span style="color:var(--muted);font-size:13px">A new tab will open.</span>';
+    setTimeout(()=>{window.open(STRIPE_URL,'_blank');closeModal();},1400);
+  } else {
+    document.getElementById('modal-success-msg').innerHTML='✓ You\'re on the list!<br><span style="color:var(--muted);font-size:13px">We\'ll be in touch when we launch.</span>';
+    setTimeout(()=>closeModal(),2800);
+  }
+}
+</script>
+</body>
+</html>
